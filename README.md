@@ -1,5 +1,7 @@
 # nonebot2磁力搜索插件
 
+使用的磁力站: https://clm9.me/
+
 安装方式:
 
     Download Zip
