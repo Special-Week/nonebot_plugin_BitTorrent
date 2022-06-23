@@ -13,7 +13,7 @@ env配置项:
 cookie的拿法:
 
     浏览器进入: https://clm9.me/
-    edge按f12, 最上面进入那个"网络"
+    edge按f12, 点击又上角那个">>"符号, 进入那个"网络"
     按ctrl+r刷新元素
     随便点击一个文件, 在请求标头里面找到cookie
     cookie冒号后面的就是cookie, 可以把他放进env里面了
