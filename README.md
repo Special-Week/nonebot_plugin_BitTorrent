@@ -7,7 +7,8 @@
 使用的磁力站: https://clm9.me
 
 安装方式:
-
+    
+    pip install nonebot_plugin_BitTorrent
     Download Zip
 
 env配置项:
