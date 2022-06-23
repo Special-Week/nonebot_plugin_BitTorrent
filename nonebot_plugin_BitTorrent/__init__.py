@@ -60,7 +60,7 @@ async def _(msg: Message = CommandArg()):
 
 
 
-# 获取磁力链接和一堆东西, 感觉有好多很笨的操作, 不会写捏呜呜呜
+# 获取磁力链接和一堆东西, 感觉有好多很笨的操作, 不会写捏呜呜呜, 拿到数据就算成功
 async def get_magnet(url):
     # 声明一个列表和要发送消息的字符串
     message_list = []
