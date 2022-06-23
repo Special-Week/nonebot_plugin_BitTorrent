@@ -12,7 +12,7 @@ env配置项:
     magnet_max_num     返回多少条结果, 类型int, 默认3                   例:magnet_max_num = 3
     clm_cookie         网站的cookie, 类型string, 自己手动从浏览器拿     例: clm_cookie = "challenge=8b11e0a1c25a29ca8cd6b530e64c5294; ex=1; _ga=GA1.1.1219749203.1655966067; _ga_W7KV15XZN0=GS1.1.1655966067.1.1.1655966427.0"
     
-    注:magnet_max_num可不配置, 会按照默认的3读取, clm_cookie必须配置, 不然会搜索失败
+    注: clm_cookie必须配置, 不然会搜索失败; magnet_max_num可不配置, 会按照默认的3读取
 
 指令:
 
