@@ -57,7 +57,7 @@ async def _(msg: Message = CommandArg()):
         except:
             await bt.finish("消息被风控了, message发送失败")
     else:
-        await bt.finish("没有找到结果捏")
+        await bt.finish("没有找到结果捏, 或者env配置的cookie过期了")
         
 
 
