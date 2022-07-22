@@ -23,7 +23,7 @@ env配置项:
 
     磁力搜索 xxx | bt  xxx   (xxx为关键词)
     例如: 磁力搜索 黑暗骑士崛起
-          ~~bt stars-590~~
+          ~~btstars590~~
 
 
 cookie的拿法:
