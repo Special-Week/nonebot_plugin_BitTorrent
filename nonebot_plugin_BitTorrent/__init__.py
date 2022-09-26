@@ -14,18 +14,16 @@ try:
 except:
     max_num = 3
 
-# cookie
+# cookie & user-agent
 try:
     cookie = nonebot.get_driver().config.clm_cookie
-except:
-    # 这是我自己刚刚获取的cookie捏
-    cookie = "challenge=8b11e0a1c25a29ca8cd6b530e64c5294; ex=1; _ga=GA1.1.1219749203.1655966067; _ga_W7KV15XZN0=GS1.1.1655966067.1.1.1655966427.0"
-
-# user-agent
-try:
     useragent = nonebot.get_driver().config.clm_useragent
 except:
+    # 这是我自己刚刚获取的cookie和useragent捏
+    cookie = "challenge=8b11e0a1c25a29ca8cd6b530e64c5294; ex=1; _ga=GA1.1.1219749203.1655966067; _ga_W7KV15XZN0=GS1.1.1655966067.1.1.1655966427.0"
     useragent = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/102.0.5005.124 Safari/537.36 Edg/102.0.1245.44"
+
+
 
 # 我也不知道有没有必要加这一行, 我看着从env闯进来的cookie这个数据类型好像不太对劲
 # cookie = cookie
