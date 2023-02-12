@@ -7,6 +7,7 @@ from httpx import AsyncClient
 import re
 import random
 import asyncio
+import aiohttp
 
 # 一次性最多返回多少条结果, 可在env设置
 try:
@@ -14,24 +15,11 @@ try:
 except:
     max_num = 3
 
-# cookie & user-agent
-try:
-    cookie = nonebot.get_driver().config.clm_cookie
-    useragent = nonebot.get_driver().config.clm_useragent
-except:
-    # 这是我自己刚刚获取的cookie和useragent捏
-    cookie = "challenge=8b11e0a1c25a29ca8cd6b530e64c5294; ex=1; _ga=GA1.1.1219749203.1655966067; _ga_W7KV15XZN0=GS1.1.1655966067.1.1.1655966427.0"
-    useragent = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/102.0.5005.124 Safari/537.36 Edg/102.0.1245.44"
-
-
-
-# 我也不知道有没有必要加这一行, 我看着从env闯进来的cookie这个数据类型好像不太对劲
-# cookie = cookie
 
 # 访问头
 headers = {
-    "cookie":cookie,
-    "user-agent":useragent,
+    "cookie": "",
+    "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/102.0.5005.124 Safari/537.36 Edg/102.0.1245.44",
 }
 
 # 网站主页
@@ -43,11 +31,24 @@ bt = on_command("磁力搜索",aliases={'bt'}, priority=10, block=True)
 
 @bt.handle()
 async def _(msg: Message = CommandArg()):
+    global headers
+
     # 纯文本提取
     keyword = msg.extract_plain_text()
     if keyword == "":
         await bt.finish("虚空搜索?")
     search_url = f"https://clm9.me/search?word={keyword}"
+
+    try:
+        # 尝试cookie
+        cookie = await get_cookie()
+        if cookie != "":
+            headers["cookie"] = cookie
+        else:
+            await bt.finish("获取cookie失败, 可能网络出现问题, 也可能是代码有bug(不可能, 绝对不可能)")
+    except:
+        await bt.finish("获取cookie失败, 可能网络出现问题, 也可能是代码有bug(不可能, 绝对不可能)")
+
     try:
         # 尝试获取消息
         message = await get_magnet(search_url)
@@ -62,7 +63,6 @@ async def _(msg: Message = CommandArg()):
             await bt.finish("消息被风控了, message发送失败")
     else:
         await bt.finish("没有找到结果捏, 或者env配置的cookie过期了")
-        
 
 
 # 获取磁力链接和一堆东西
@@ -111,3 +111,31 @@ async def get_info(url,client):
     name = list(name[0])[0]
     message = f"文件名: {name} \n大小: {size}\n链接: {magnet}\n"
     return message
+
+
+# 获取cookie
+async def get_cookie():
+    headers = {
+        "user-agent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/102.0.5005.124 Safari/537.36 Edg/102.0.1245.44",
+    }
+
+    async with aiohttp.ClientSession(headers=headers) as session:
+        async with session.post(url=magnet_url, data={"act": "challenge"}, headers=headers) as response:
+            if response.status != 200:
+                response.raise_for_status()
+                return ""
+
+            cookies = response.headers.get("Set-Cookie")
+            if cookies:
+                match = re.search("test=([^;]+);", cookies)
+                if match:
+                    test = match.group(1)
+                    # print("test=", test)
+                else:
+                    print("没有获取到cookie中的test内容，寄")
+                    return ""
+            else:
+                print("没有获取到cookie，取名为寄~")
+                return ""
+
+            return "ex=1; test=" + test
