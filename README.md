@@ -11,10 +11,11 @@
     pip install nonebot_plugin_BitTorrent
     nb plugin install nonebot_plugin_BitTorrent
     Download Zip
+    git clone https://github.com/Special-Week/nonebot_plugin_BitTorrent.git
 
 env配置项:
 
-    magnet_max_num     返回多少条结果, 类型int, 默认3                   例: magnet_max_num = 3
+    magnet_max_num     返回多少条结果, 类型int, 默认3, 最大12               例: magnet_max_num = 3
 
     
     
@@ -22,5 +23,7 @@ env配置项:
 
     磁力搜索 xxx | bt xxx   (xxx为关键词)
     例如: 磁力搜索 真夏の夜の淫夢
+          bt 真夏の夜の淫夢
+    注: 响应器是由on_command生成的, 需要带上env中配置的COMMAND_START前缀(默认["/"], 可设置空字符串[""])
 
 
