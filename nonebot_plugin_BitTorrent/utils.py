@@ -9,7 +9,7 @@ from httpx import AsyncClient
 from nonebot.adapters.onebot.v11 import Message
 from nonebot.matcher import Matcher
 from nonebot.params import CommandArg
-
+from urllib.parse import unquote
 
 class BitTorrent:
     def __init__(self) -> None:
@@ -131,7 +131,7 @@ class BitTorrent:
         soup = BeautifulSoup(target, "lxml")
         script = soup.find_all("script")[-1]
         script = str(script).split('"')[1]
-        return base64.b64decode(script).decode()
+        return unquote(base64.b64decode(script).decode())
 
     
 
