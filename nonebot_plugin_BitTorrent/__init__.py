@@ -10,9 +10,12 @@ __plugin_meta__ = PluginMetadata(
     name="bittorrent",
     description="磁力搜索插件",
     usage="磁力搜索 xxx",
+    type="application",
+    homepage="https://github.com/Special-Week/nonebot_plugin_BitTorrent",
+    supported_adapters={"~onebot.v11"},
     extra={
         'author':   'Special-Week',
-        'version':  '0.0.8',
+        'version':  '0.0.9',
         'priority': 10,
     }
 )
