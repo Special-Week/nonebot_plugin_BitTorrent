@@ -2,6 +2,7 @@ import asyncio
 import base64
 import random
 import re
+from urllib.parse import unquote
 
 import nonebot
 from bs4 import BeautifulSoup
@@ -9,7 +10,7 @@ from httpx import AsyncClient
 from nonebot.adapters.onebot.v11 import Message
 from nonebot.matcher import Matcher
 from nonebot.params import CommandArg
-from urllib.parse import unquote
+
 
 class BitTorrent:
     def __init__(self) -> None:
@@ -22,7 +23,7 @@ class BitTorrent:
         #     "cookie": "",
         #     "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/102.0.5005.124 Safari/537.36 Edg/102.0.1245.44",
         # }
-        self.magnet_url = "https://clm9.me"
+        self.magnet_url = "https://clm99.org"
 
 
     async def main(self, matcher: Matcher, msg: Message = CommandArg()):
@@ -30,7 +31,7 @@ class BitTorrent:
         keyword = msg.extract_plain_text()
         if keyword == "":
             await matcher.finish("虚空搜索?来点车牌gkd")
-        search_url = f"https://clm9.me/search?word={keyword}"
+        search_url = f"https://clm99.org/search?word={keyword}"
 
         # try:
         #     # 尝试cookie
