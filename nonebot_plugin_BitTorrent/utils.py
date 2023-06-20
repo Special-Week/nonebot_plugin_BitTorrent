@@ -7,10 +7,11 @@ from urllib.parse import unquote
 import nonebot
 from bs4 import BeautifulSoup
 from httpx import AsyncClient
+from loguru import logger
 from nonebot.adapters.onebot.v11 import Message
 from nonebot.matcher import Matcher
 from nonebot.params import CommandArg
-from loguru import logger
+
 
 class BitTorrent:
     def __init__(self) -> None:
