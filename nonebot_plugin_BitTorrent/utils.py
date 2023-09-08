@@ -1,6 +1,6 @@
 import asyncio
 import contextlib
-from typing import Any, Coroutine, List
+from typing import Any, Coroutine, List, Union
 
 import nonebot
 from bs4 import BeautifulSoup, NavigableString, ResultSet, Tag
@@ -87,10 +87,12 @@ class BitTorrent:
             async with AsyncClient() as client:
                 resp: Response = await client.get(search_url)
             soup = BeautifulSoup(resp.text, "lxml")
-            dl: Tag | NavigableString | None = soup.find(
+            dl: Union[Tag, NavigableString, None] = soup.find(
                 "dl", class_="dl-horizontal torrent-info col-sm-9"
             )
-            h2: Tag | NavigableString | None = soup.find("h2", class_="magnet-title")
+            h2: Union[Tag, NavigableString, None] = soup.find(
+                "h2", class_="magnet-title"
+            )
             if isinstance(dl, Tag) and isinstance(h2, Tag):
                 dt: ResultSet[Any] = dl.find_all("dt")
                 dd: ResultSet[Any] = dl.find_all("dd")
