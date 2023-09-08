@@ -21,10 +21,11 @@ class BitTorrent:
     def __init__(self) -> None:
         """初始化一些变量, 用env拿到magnet_max_num参数"""
         try:
-            self.max_num: int = nonebot.get_driver().config.magnet_max_num
+            self.max_num = nonebot.get_driver().config.magnet_max_num
         except Exception:
             self.max_num: int = 3
-
+        if not isinstance(self.max_num, int):
+            self.max_num: int = 3
         self.magnet_url = "https://cili.site"
 
     async def main(
