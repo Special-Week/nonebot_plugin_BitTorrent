@@ -13,7 +13,7 @@
 
 env配置项:
 
-    magnet_max_num     返回多少条结果, 类型int, 默认3, 最大12               例: magnet_max_num = 3
+    magnet_max_num    # 返回多少条结果, 类型int, 默认3, 最大12               例: magnet_max_num = 3
 
 
 ​    
