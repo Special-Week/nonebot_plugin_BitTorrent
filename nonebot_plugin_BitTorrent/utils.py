@@ -60,9 +60,12 @@ class BitTorrent:
                 }
                 for i in data
             ]
-            await bot.call_api(
-                "send_group_forward_msg", group_id=event.group_id, messages=messages
-            )
+            try:
+                await bot.call_api(
+                    "send_group_forward_msg", group_id=event.group_id, messages=messages
+                )
+            except Exception:
+                await matcher.finish("\n".join(data))
 
     async def get_items(self, keyword) -> List[str]:
         search_url: str = f"{self.magnet_url}/search?q={keyword}"
