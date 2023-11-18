@@ -12,6 +12,7 @@ from nonebot.adapters.onebot.v11 import (
     Message,
     MessageEvent,
     PrivateMessageEvent,
+    Adapter,
 )
 from nonebot.matcher import Matcher
 from nonebot.params import CommandArg
@@ -36,6 +37,13 @@ class BitTorrent:
         msg: Message = CommandArg(),
     ) -> None:
         """主函数, 用于响应命令"""
+
+        # 获取user_agent, 用于判断是否cqhttp
+        adapter: Adapter = bot.adapter
+        user_agent: str = adapter.connections[bot.self_id].request.headers.get(
+            "User-Agent", "None"
+        )
+
         keyword: str = msg.extract_plain_text()
         if not keyword:
             await matcher.finish("虚空搜索?来点车牌gkd")
@@ -49,22 +57,20 @@ class BitTorrent:
         if isinstance(event, PrivateMessageEvent):
             await matcher.finish("\n".join(data))
         if isinstance(event, GroupMessageEvent):
-            messages: list = [
+            messages: List = [
                 {
                     "type": "node",
                     "data": {
                         "name": "bot",
-                        "uin": bot.self_id,
-                        "content": [
-                            {
-                                "type": "text",
-                                "data": {"text": f"{i}"},
-                            }
-                        ],
+                        "content": i,
                     },
                 }
                 for i in data
             ]
+            if "cqhttp" in user_agent.lower():
+                for i in messages:
+                    i["data"]["uin"] = bot.self_id
+
             try:
                 await bot.call_api(
                     "send_group_forward_msg", group_id=event.group_id, messages=messages
