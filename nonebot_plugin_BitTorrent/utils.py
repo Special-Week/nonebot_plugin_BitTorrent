@@ -55,7 +55,12 @@ class BitTorrent:
                     "data": {
                         "name": "bot",
                         "uin": bot.self_id,
-                        "content": i,
+                        "content": [
+                            {
+                                "type": "text",
+                                "data": {"text": f"{i}"},
+                            }
+                        ],
                     },
                 }
                 for i in data
