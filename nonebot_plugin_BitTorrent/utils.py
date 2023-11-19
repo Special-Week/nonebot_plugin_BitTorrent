@@ -11,7 +11,6 @@ from nonebot.adapters.onebot.v11 import (
     GroupMessageEvent,
     Message,
     MessageEvent,
-    PrivateMessageEvent,
     Adapter,
 )
 from nonebot.matcher import Matcher
@@ -54,29 +53,23 @@ class BitTorrent:
         # 如果搜索到了结果, 则尝试发送, 有些账号好像文本太长cqhttp会显示风控
         if not data:
             await matcher.finish("没有找到结果捏, 换个关键词试试吧")
-        if isinstance(event, PrivateMessageEvent):
-            await matcher.finish("\n".join(data))
-        if isinstance(event, GroupMessageEvent):
+        if isinstance(event, GroupMessageEvent) and "cqhttp" in user_agent.lower():
             messages: List = [
                 {
                     "type": "node",
                     "data": {
                         "name": "bot",
+                        "uin": bot.self_id,
                         "content": i,
                     },
                 }
                 for i in data
             ]
-            if "cqhttp" in user_agent.lower():
-                for i in messages:
-                    i["data"]["uin"] = bot.self_id
-
-            try:
-                await bot.call_api(
-                    "send_group_forward_msg", group_id=event.group_id, messages=messages
-                )
-            except Exception:
-                await matcher.finish("\n".join(data))
+            await bot.call_api(
+                "send_group_forward_msg", group_id=event.group_id, messages=messages
+            )
+        else:
+            await matcher.finish("\n".join(data))
 
     async def get_items(self, keyword) -> List[str]:
         search_url: str = f"{self.magnet_url}/search?q={keyword}"
