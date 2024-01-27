@@ -14,6 +14,7 @@
 env配置项:
 
     magnet_max_num    # 返回多少条结果, 类型int, 默认3, 最大12               例: magnet_max_num = 3
+    onebot_group_forward_msg    # 在onebotv11适配器下是否转发消息, 类型bool, 默认False, 仅支持onebot  例: onebot_group_forward_msg = True
 
 
 ​    

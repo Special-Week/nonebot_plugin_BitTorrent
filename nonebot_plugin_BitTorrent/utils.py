@@ -1,48 +1,31 @@
 import asyncio
 import contextlib
-from typing import Any, Coroutine, List, Union
+from typing import Any, Coroutine, List
 
-import nonebot
-from bs4 import BeautifulSoup, NavigableString, ResultSet, Tag
-from httpx import AsyncClient, Response
+from bs4 import BeautifulSoup, Tag
+from httpx import AsyncClient
 from loguru import logger
-from nonebot.adapters.onebot.v11 import (
-    Bot,
-    GroupMessageEvent,
-    Message,
-    MessageEvent,
-    Adapter,
-)
+from nonebot.adapters.onebot.v11 import GroupMessageEvent
+from nonebot.internal.adapter import Bot, Event, Message
 from nonebot.matcher import Matcher
 from nonebot.params import CommandArg
 
+from .config import config
+
 
 class BitTorrent:
-    def __init__(self) -> None:
-        """初始化一些变量, 用env拿到magnet_max_num参数"""
-        try:
-            self.max_num = nonebot.get_driver().config.magnet_max_num
-        except Exception:
-            self.max_num: int = 3
-        if not isinstance(self.max_num, int):
-            self.max_num: int = 3
-        self.magnet_url = "https://cili.site"
+    magnet_url = "https://cili.site"
 
     async def main(
         self,
         bot: Bot,
         matcher: Matcher,
-        event: MessageEvent,
+        event: Event,
         msg: Message = CommandArg(),
     ) -> None:
         """主函数, 用于响应命令"""
 
-        # 获取user_agent, 用于判断是否cqhttp
-        adapter: Adapter = bot.adapter
-        user_agent: str = adapter.connections[bot.self_id].request.headers.get(
-            "User-Agent", "None"
-        )
-
+        print("开始搜索")
         keyword: str = msg.extract_plain_text()
         if not keyword:
             await matcher.finish("虚空搜索?来点车牌gkd")
@@ -50,10 +33,10 @@ class BitTorrent:
             data: List[str] = await self.get_items(keyword)
         except Exception as e:
             await matcher.finish("搜索失败, 下面是错误信息:\n" + repr(e))
-        # 如果搜索到了结果, 则尝试发送, 有些账号好像文本太长cqhttp会显示风控
         if not data:
             await matcher.finish("没有找到结果捏, 换个关键词试试吧")
-        if isinstance(event, GroupMessageEvent) and "cqhttp" in user_agent.lower():
+        # 如果开启了群消息转发, 且消息来自onebotv11的群消息
+        if config.onebot_group_forward_msg and isinstance(event, GroupMessageEvent):
             messages: List = [
                 {
                     "type": "node",
@@ -75,34 +58,30 @@ class BitTorrent:
         search_url: str = f"{self.magnet_url}/search?q={keyword}"
         async with AsyncClient() as client:
             try:
-                resp: Response = await client.get(search_url)
+                resp = await client.get(search_url)
             except Exception as e:
-                print(repr(e))
+                logger.error(repr(e))
                 return [f"获取{search_url}失败， 错误信息：{repr(e)}"]
         soup = BeautifulSoup(resp.text, "lxml")
-        tr: ResultSet[Any] = soup.find_all("tr")
+        tr = soup.find_all("tr")
         if not tr:
             return []
         a_list: list[Any] = [i.find_all("a") for i in tr]
         href_list: list[str] = [self.magnet_url + i[0].get("href") for i in a_list if i]
-        maxnum: int = min(len(href_list), self.max_num)
+        maxnum: int = min(len(href_list), config.magnet_max_num)
         tasks: List[Coroutine] = [self.get_magnet(i) for i in href_list[:maxnum]]
         return await asyncio.gather(*tasks)
 
     async def get_magnet(self, search_url: str) -> str:
         try:
             async with AsyncClient() as client:
-                resp: Response = await client.get(search_url)
+                resp = await client.get(search_url)
             soup = BeautifulSoup(resp.text, "lxml")
-            dl: Union[Tag, NavigableString, None] = soup.find(
-                "dl", class_="dl-horizontal torrent-info col-sm-9"
-            )
-            h2: Union[Tag, NavigableString, None] = soup.find(
-                "h2", class_="magnet-title"
-            )
+            dl = soup.find("dl", class_="dl-horizontal torrent-info col-sm-9")
+            h2 = soup.find("h2", class_="magnet-title")
             if isinstance(dl, Tag) and isinstance(h2, Tag):
-                dt: ResultSet[Any] = dl.find_all("dt")
-                dd: ResultSet[Any] = dl.find_all("dd")
+                dt = dl.find_all("dt")
+                dd = dl.find_all("dd")
                 target: str = (
                     f"标题 :: {h2.text}\n磁力链接 :: magnet:?xt=urn:btih:{dd[0].text}\n"
                 )
