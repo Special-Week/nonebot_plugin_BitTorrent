@@ -22,7 +22,7 @@ with contextlib.suppress(Exception):
         supported_adapters=None,
         extra={
             "author": "Special-Week",
-            "version": "0.0.20",
+            "version": "0.0.21",
             "priority": 10,
         },
     )
