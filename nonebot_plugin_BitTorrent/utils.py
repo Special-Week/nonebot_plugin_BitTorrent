@@ -36,7 +36,7 @@ class BitTorrent:
         if not data:
             await matcher.finish("没有找到结果捏, 换个关键词试试吧")
         # 如果开启了群消息转发, 且消息来自onebotv11的群消息
-        if config.forward_msg and isinstance(event, GroupMessageEvent):
+        if config.onebot_group_forward_msg and isinstance(event, GroupMessageEvent):
             messages: List = [
                 {
                     "type": "node",
@@ -68,7 +68,7 @@ class BitTorrent:
             return []
         a_list: list[Any] = [i.find_all("a") for i in tr]
         href_list: list[str] = [self.magnet_url + i[0].get("href") for i in a_list if i]
-        maxnum: int = min(len(href_list), config.max_num)
+        maxnum: int = min(len(href_list), config.magnet_max_num)
         tasks: List[Coroutine] = [self.get_magnet(i) for i in href_list[:maxnum]]
         return await asyncio.gather(*tasks)
 
